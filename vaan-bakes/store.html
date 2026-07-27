@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Sour+Gummy:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Fraunces:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
@@ -30,8 +30,14 @@
         <nav class="main-nav">
             <li><a href="index.html" class="nav-link">HOME</a></li>
             <li><a href="store.html" class="nav-link">PRODUCTS</a></li>
-            <li><a href="index.html#about" class="nav-link">ABOUT US</a></li>
+            <li><a href="index.html#about" class="nav-link">ABOUT ME</a></li>
             <li><a href="index.html#contact" class="nav-link">CONTACT US</a></li>
+            <li>
+                <form class="header-search-form" action="#" role="search">
+                    <input type="search" id="site-search" class="header-search-input" placeholder="Search cakes, cupcakes, cookies" aria-label="Search store">
+                    <button type="submit" class="header-search-button" aria-label="Search store"><i class="fas fa-search"></i></button>
+                </form>
+            </li>
             <li>
                 <button class="cart-button" id="view-cart-btn">
                     <i class="fas fa-shopping-cart"></i>
@@ -53,6 +59,128 @@
         <a href="#cupcakes" class="category-link">Cupcakes</a>
         <a href="#cookies" class="category-link">Cookies</a>
     </div>
+
+    <div class="builder-shortcut">
+        <a href="#cake-builder" class="btn btn-primary builder-shortcut-btn">Build Your Own Cake</a>
+    </div>
+
+    <section class="cake-builder-section" id="cake-builder">
+        <div class="section-intro">
+            <h2 class="section-heading">Build Your Own Cake</h2>
+            <p class="builder-lead">Choose your cake structure, fillings, and finishing touches. This is the frontend builder preview; pricing can later connect to the backend catalog.</p>
+        </div>
+
+        <div class="builder-layout">
+            <div class="builder-panel">
+                <div class="builder-group">
+                    <h3 class="builder-group-title">Cake size</h3>
+                    <div class="option-row" data-group="size">
+                        <button type="button" class="choice-chip active" data-value="mini" data-label="Mini 6-inch">Mini 6-inch</button>
+                        <button type="button" class="choice-chip" data-value="small" data-label="Small 8-inch">Small 8-inch</button>
+                        <button type="button" class="choice-chip" data-value="medium" data-label="Medium 10-inch">Medium 10-inch</button>
+                        <button type="button" class="choice-chip" data-value="large" data-label="Large 12-inch">Large 12-inch</button>
+                    </div>
+                </div>
+
+                <div class="builder-group">
+                    <h3 class="builder-group-title">Layers</h3>
+                    <div class="option-row" data-group="layers">
+                        <button type="button" class="choice-chip active" data-value="2" data-label="2 layers">2 layers</button>
+                        <button type="button" class="choice-chip" data-value="3" data-label="3 layers">3 layers</button>
+                        <button type="button" class="choice-chip" data-value="4" data-label="4 layers">4 layers</button>
+                    </div>
+                </div>
+
+                <div class="builder-grid">
+                    <div class="builder-group">
+                        <h3 class="builder-group-title">Cake flavor</h3>
+                        <div class="select-wrap">
+                            <select id="cake-flavor" class="builder-select">
+                                <option value="classic-vanilla">Classic Vanilla</option>
+                                <option value="double-chocolate">Double Chocolate</option>
+                                <option value="red-velvet">Red Velvet</option>
+                                <option value="lemon-zest">Lemon Zest</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="builder-group">
+                        <h3 class="builder-group-title">Filling</h3>
+                        <div class="select-wrap">
+                            <select id="cake-filling" class="builder-select">
+                                <option value="vanilla-cream">Vanilla Cream</option>
+                                <option value="berry-compote">Berry Compote</option>
+                                <option value="salted-caramel">Salted Caramel</option>
+                                <option value="chocolate-ganache">Chocolate Ganache</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-grid">
+                    <div class="builder-group">
+                        <h3 class="builder-group-title">Frosting</h3>
+                        <div class="option-column" data-group="frosting">
+                            <button type="button" class="choice-chip active" data-value="buttercream" data-label="Vanilla buttercream">Vanilla buttercream</button>
+                            <button type="button" class="choice-chip" data-value="chocolate" data-label="Chocolate silk">Chocolate silk</button>
+                            <button type="button" class="choice-chip" data-value="strawberry" data-label="Strawberry cream">Strawberry cream</button>
+                            <button type="button" class="choice-chip" data-value="cream-cheese" data-label="Cream cheese">Cream cheese</button>
+                        </div>
+                    </div>
+
+                    <div class="builder-group">
+                        <h3 class="builder-group-title">Side frosting</h3>
+                        <div class="option-column" data-group="side-frosting">
+                            <button type="button" class="choice-chip active" data-value="smooth" data-label="Smooth finish">Smooth finish</button>
+                            <button type="button" class="choice-chip" data-value="rosettes" data-label="Rosette sides">Rosette sides</button>
+                            <button type="button" class="choice-chip" data-value="drip" data-label="Drip finish">Drip finish</button>
+                            <button type="button" class="choice-chip" data-value="rustic" data-label="Rustic spatula">Rustic spatula</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-group">
+                    <h3 class="builder-group-title">Toppings</h3>
+                    <div class="toppings-grid">
+                        <label class="topping-pill"><input type="checkbox" value="fresh-berries" checked> Fresh berries</label>
+                        <label class="topping-pill"><input type="checkbox" value="sprinkles"> Sprinkles</label>
+                        <label class="topping-pill"><input type="checkbox" value="macarons"> Macarons</label>
+                        <label class="topping-pill"><input type="checkbox" value="edible-flowers"> Edible flowers</label>
+                        <label class="topping-pill"><input type="checkbox" value="chocolate-shards"> Chocolate shards</label>
+                    </div>
+                </div>
+
+                <div class="builder-group">
+                    <h3 class="builder-group-title">Personal note</h3>
+                    <textarea id="cake-message" class="builder-textarea" rows="4" placeholder="Add a birthday message, theme, or color request"></textarea>
+                </div>
+            </div>
+
+            <aside class="builder-preview">
+                <div class="preview-card">
+                    <div class="cake-preview" aria-hidden="true">
+                        <div class="cake-layer-preview layer-bottom"></div>
+                        <div class="cake-layer-preview layer-middle"></div>
+                        <div class="cake-layer-preview layer-top"></div>
+                        <div class="cake-layer-preview layer-four"></div>
+                        <div class="cake-frosting-ring"></div>
+                        <div class="cake-garnish"></div>
+                    </div>
+
+                    <div class="preview-summary">
+                        <h3>Current build</h3>
+                        <p id="builder-summary">Mini 6-inch, 2 layers, Vanilla buttercream, Smooth finish</p>
+                        <ul class="builder-details" id="builder-details"></ul>
+                        <div class="builder-price-row">
+                            <span>Estimated price</span>
+                            <strong id="builder-price">$32</strong>
+                        </div>
+                        <button type="button" class="btn btn-primary builder-cta">Reserve this build</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
 
     <!-- CAKES SECTION -->
     <section id="cakes" class="product-category">
@@ -132,7 +260,7 @@
                 <div class="footer-links">
                     <a href="store.html" class="footer-link">Order Online</a>
                     <a href="refund.html" class="footer-link">Refund Policy</a>
-                    <a href="index.html#about" class="footer-link">About Us</a>
+                    <a href="index.html#about" class="footer-link">About Me</a>
                     <a href="index.html#contact" class="footer-link">Contact</a>
                 </div>
             </div>
@@ -177,6 +305,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
     
     <!-- Scripts -->
+    <script src="js/main.js"></script>
     <script src="js/store.js"></script>
     <script src="js/scroll-waves.js"></script>
 </body>

@@ -254,42 +254,6 @@ function createProductCard(product) {
 }
 
 // ===================================
-// STORE SEARCH / FILTERING
-// ===================================
-function filterStoreCatalog(query) {
-    const normalizedQuery = (query || '').trim().toLowerCase();
-    const sections = document.querySelectorAll('.product-category');
-    let firstVisibleSection = null;
-
-    sections.forEach((section) => {
-        const cards = section.querySelectorAll('.product-card');
-        let visibleCount = 0;
-
-        cards.forEach((card) => {
-            const text = card.textContent.toLowerCase();
-            const matches = !normalizedQuery || text.includes(normalizedQuery);
-            card.style.display = matches ? '' : 'none';
-
-            if (matches) {
-                visibleCount += 1;
-            }
-        });
-
-        section.style.display = !normalizedQuery || visibleCount > 0 ? '' : 'none';
-
-        if (!firstVisibleSection && section.style.display !== 'none') {
-            firstVisibleSection = section;
-        }
-    });
-
-    if (firstVisibleSection && normalizedQuery) {
-        firstVisibleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
-
-window.__filterStoreCatalog = filterStoreCatalog;
-
-// ===================================
 // INITIALIZE - SINGLE DOMContentLoaded
 // ===================================
 document.addEventListener('DOMContentLoaded', () => {

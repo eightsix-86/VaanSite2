@@ -6,7 +6,7 @@
     <title>Vaan Bakes - Delivering Freshly Baked Goodness</title>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Sour+Gummy:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Fraunces:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
@@ -18,9 +18,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
   
@@ -32,90 +29,97 @@
         </div>
         <nav class="main-nav">
             <a href="store.html" class="nav-link">PRODUCTS</a>
-            <a href="#about" class="nav-link scroll-link">ABOUT US</a>
+            <a href="#about" class="nav-link scroll-link">ABOUT ME</a>
             <a href="#contact" class="nav-link scroll-link">CONTACT US</a>
+            <form class="header-search-form" action="#" role="search">
+                <input type="search" id="site-search" class="header-search-input" placeholder="Search cakes, cupcakes, cookies" aria-label="Search site">
+                <button type="submit" class="header-search-button" aria-label="Search site"><i class="fas fa-search"></i></button>
+            </form>
         </nav>
     </header>
 
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
+            <p class="hero-kicker">Small-batch bakery studio</p>
             <h2 class="hero-heading">
                 Vaan Bakes<br>
-                Delivering freshly baked goodness, where every bite is a taste of love and quality
+                Fresh cakes, cupcakes, and cookies with a warm handmade touch
             </h2>
+            <p class="hero-subtitle">A soft, soulful bakery experience for celebrations, gifting, and everyday cravings.</p>
             <div class="hero-buttons">
                 <a href="store.html" class="btn btn-primary">VISIT STORE</a>
-                <a href="#about" class="btn btn-secondary">ABOUT US</a>
             </div>
         </div>
     </section>
 
-    <!-- 3D Cake Section with Scroll Control -->
-    <section class="cake-section-3d" id="cake-3d-section">
-        <div class="cake-scroll-container">
-            <div class="cake-canvas-wrapper">
-                <canvas id="cake-canvas"></canvas>
-                
-                <!-- Callouts for layers -->
-                <div class="layer-callout callout-1" id="callout-1">
-                    <div class="callout-line"></div>
-                    <div class="callout-bubble">
-                        <span>🍫 Rich Chocolate Base</span>
-                    </div>
-                </div>
-                <div class="layer-callout callout-2" id="callout-2">
-                    <div class="callout-line"></div>
-                    <div class="callout-bubble">
-                        <span>🍦 Vanilla Cream Layer</span>
-                    </div>
-                </div>
-                <div class="layer-callout callout-3" id="callout-3">
-                    <div class="callout-line"></div>
-                    <div class="callout-bubble">
-                        <span>🍓 Strawberry Dream Top</span>
-                    </div>
-                </div>
+    <!-- Brand Story Section -->
+    <section id="about" class="about-section story-section">
+        <div class="story-grid">
+            <div class="story-copy">
+                <h2 class="section-heading">Our Brand Story in a Nutshell</h2>
+                <p class="paragraph">Vaan Bakes is built around the simple pleasure of bakery treats that feel familiar, thoughtful, and generous. We keep our menu focused on cakes, cupcakes, and cookies so every item gets the attention it deserves.</p>
+                <p class="paragraph">The goal is not just to sell desserts, but to create a warm bakery moment that feels special from the first look to the last bite.</p>
             </div>
-            
-            <div class="cake-text-content" id="cakeText">
-                <h3 class="subheading">
-                    Every layer, baked to perfection<br>
-                    Blending dreamy batters, with a slice of affection,<br>
-                    Emerging flawless, a decadent confection
-                </h3>
-                <p class="paragraph">
-                    At Vaan bakes, every cake begins with a heartfelt ritual, where we blend dreamy batters with a slice of affection, infusing each one with the warmth of tradition and care. Layer by layer, we bake to perfection in gentle ovens, allowing them to rise slowly and evenly, capturing that golden grace that promises indulgence. Emerging flawless, these creations boast rich flavor, velvety texture, and an irresistible consistency that melts on the tongue.
-                </p>
+            <div class="story-card">
+                <p class="story-eyebrow">Made for</p>
+                <h3>Celebrations, gifting, and everyday cravings</h3>
+                <ul class="story-points">
+                    <li>Freshly baked, small-batch desserts</li>
+                    <li>Custom cake builder for personal orders</li>
+                    <li>Warm, nostalgic bakery styling</li>
+                </ul>
             </div>
         </div>
     </section>
 
-    <!-- About Us Section -->
-    <section id="about" class="about-section">
-        <h2 class="section-heading">About Us</h2>
-        <div class="about-content">
-            <p class="paragraph">Welcome to Vaan Bakes, where passion meets perfection in every bite! We are a home-based bakery dedicated to crafting delicious, freshly baked goods that bring joy to your celebrations and everyday moments.</p>
-            <p class="paragraph">Our journey began with a simple love for baking and has grown into a commitment to deliver quality treats made with the finest ingredients. From decadent cakes to delightful cupcakes and cookies, each product is handcrafted with care and attention to detail.</p>
-            <p class="paragraph">We take pride in our personalized service, ensuring that every order is tailored to your needs and delivered with warmth. Whether it's a birthday, anniversary, or just a sweet craving, Vaan Bakes is here to make your moments memorable.</p>
+    <!-- Our Products Section -->
+    <section class="products-showcase-section" id="products-showcase">
+        <div class="section-intro">
+            <h2 class="section-heading">Our Products</h2>
+            <p class="builder-lead">A focused menu inspired by the way great bakeries present their best-loved categories.</p>
+        </div>
+        <div class="showcase-grid">
+            <a class="showcase-card" href="store.html#cakes">
+                <img class="showcase-image" alt="Placeholder cake display" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 420'%3E%3Crect width='600' height='420' rx='36' fill='%23f6eee6'/%3E%3Ccircle cx='470' cy='90' r='46' fill='%23d9b48d' fill-opacity='0.55'/%3E%3Crect x='105' y='150' width='390' height='168' rx='28' fill='%235e2e4f' fill-opacity='0.12'/%3E%3Crect x='140' y='182' width='320' height='22' rx='11' fill='%238d4e3b'/%3E%3Crect x='170' y='220' width='260' height='20' rx='10' fill='%235e2e4f'/%3E%3Crect x='200' y='256' width='200' height='18' rx='9' fill='%23c79d68'/%3E%3Ctext x='300' y='360' text-anchor='middle' font-family='Arial' font-size='34' font-weight='700' fill='%234a332d'%3ECAKES%3C/text%3E%3C/svg%3E">
+                <span class="showcase-label">Cakes</span>
+                <p>Layered cakes for birthdays, milestones, and custom orders.</p>
+            </a>
+            <a class="showcase-card" href="store.html#cupcakes">
+                <img class="showcase-image" alt="Placeholder cupcake display" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 420'%3E%3Crect width='600' height='420' rx='36' fill='%23fbf4ea'/%3E%3Ccircle cx='452' cy='112' r='44' fill='%23b46a6a' fill-opacity='0.25'/%3E%3Cpath d='M160 280h280l-26 62H186z' fill='%238d4e3b'/%3E%3Cpath d='M185 188c18-46 72-74 115-74s97 28 115 74c-16 18-44 30-115 30s-99-12-115-30z' fill='%235e2e4f' fill-opacity='0.18'/%3E%3Cpath d='M235 220c12-16 35-28 65-28s53 12 65 28c-14 18-31 28-65 28s-51-10-65-28z' fill='%23d9b48d'/%3E%3Ctext x='300' y='360' text-anchor='middle' font-family='Arial' font-size='34' font-weight='700' fill='%234a332d'%3ECUPCAKES%3C/text%3E%3C/svg%3E">
+                <span class="showcase-label">Cupcakes</span>
+                <p>Small-batch cupcakes with playful toppings and rich swirls.</p>
+            </a>
+            <a class="showcase-card" href="store.html#cookies">
+                <img class="showcase-image" alt="Placeholder cookie display" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 420'%3E%3Crect width='600' height='420' rx='36' fill='%23f5eee5'/%3E%3Ccircle cx='170' cy='138' r='48' fill='%23c79d68' fill-opacity='0.7'/%3E%3Ccircle cx='250' cy='168' r='52' fill='%235e2e4f' fill-opacity='0.12'/%3E%3Ccircle cx='348' cy='144' r='50' fill='%238d4e3b' fill-opacity='0.3'/%3E%3Ccircle cx='438' cy='178' r='46' fill='%23d9b48d' fill-opacity='0.8'/%3E%3Cpath d='M140 286c52-28 112-28 160 0 48-28 108-28 160 0-18 30-56 56-160 56s-142-26-160-56z' fill='%235e2e4f' fill-opacity='0.18'/%3E%3Ctext x='300' y='360' text-anchor='middle' font-family='Arial' font-size='34' font-weight='700' fill='%234a332d'%3ECOOKIES%3C/text%3E%3C/svg%3E">
+                <span class="showcase-label">Cookies</span>
+                <p>Soft, chewy, and crisp cookie boxes for easy gifting.</p>
+            </a>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <h2 class="section-heading">Contact Us</h2>
-        <div class="contact-info">
-            <div class="contact-item">
-                <h4>📧 Email</h4>
-                <p>hello@vaanbakes.com</p>
+    <!-- Seasonal Specials Section -->
+    <section class="seasonal-specials-section" id="seasonal-specials">
+        <div class="section-intro">
+            <h2 class="section-heading">Seasonal Specials</h2>
+            <p class="builder-lead">This section is rendered from a data source so a backend can update it anytime without changing the page layout.</p>
+        </div>
+        <div class="seasonal-specials-grid" id="seasonal-specials-grid"></div>
+    </section>
+
+    <!-- Best Bakery Section -->
+    <section id="contact" class="contact-section best-bakery-section">
+        <div class="best-bakery-layout">
+            <div>
+                <p class="story-eyebrow">About the baker</p>
+                <h2 class="section-heading">About Vaan Bakes</h2>
+                <p class="paragraph">I bake with a simple goal: make every cake feel thoughtful, balanced, and memorable. Vaan Bakes is built around clean flavors, soft textures, and dessert designs that feel personal rather than overdone.</p>
             </div>
-            <div class="contact-item">
-                <h4>📱 Phone</h4>
-                <p>+1 (555) 123-4567</p>
-            </div>
-            <div class="contact-item">
-                <h4>🕐 Hours</h4>
-                <p>Mon-Sun: 9 AM - 8 PM</p>
+            <div class="best-bakery-card">
+                <p class="story-eyebrow">A few notes</p>
+                <p class="best-bakery-line">Built for birthdays, gifting, and small celebrations.</p>
+                <p class="best-bakery-line">Focused menu: cakes, cupcakes, and cookies.</p>
+                <p class="best-bakery-line">Custom builds available through the store.</p>
             </div>
         </div>
     </section>
@@ -144,7 +148,7 @@
                 <div class="footer-links">
                     <a href="store.html" class="footer-link">Order Online</a>
                     <a href="refund.html" class="footer-link">Refund Policy</a>
-                    <a href="#about" class="footer-link">About Us</a>
+                    <a href="#about" class="footer-link">About Me</a>
                     <a href="#contact" class="footer-link">Contact</a>
                 </div>
             </div>
@@ -183,13 +187,11 @@
     </footer>
 
     <!-- Scripts in correct order -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
     <!-- Your custom scripts -->
-    <script src="js/cake3d.js"></script>
     <script src="js/main.js"></script>
     <script src="js/scroll-waves.js"></script>
     <script src="js/store.js"></script>
