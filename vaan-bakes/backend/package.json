@@ -1,0 +1,15 @@
+{
+  "name": "vaan-bakes-backend",
+  "version": "1.0.0",
+  "description": "Simple Express API + static server for Vaan Bakes, instrumented with Prometheus metrics.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "prom-client": "^15.1.3"
+  },
+  "license": "MIT"
+}
