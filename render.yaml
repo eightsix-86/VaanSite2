@@ -13,16 +13,20 @@
 #      yourself — they never live in the repo).
 #   4. Deploy. The API is live at:
 #        https://<service-name>.onrender.com/api/products
+#
+# Uses the Docker runtime with build context at the repo root (`.`)
+# and vaan-bakes/backend/Dockerfile, which bundles BOTH the backend
+# and the static frontend into the image, so the deployed service
+# can serve the site and API from one instance.
 # ============================================================
 
 services:
   - type: web
     name: vaan-bakes-api
-    runtime: node
-    rootDir: vaan-bakes/backend
+    runtime: docker
+    rootDir: .
     plan: free
-    buildCommand: npm install
-    startCommand: node server.js
+    dockerfilePath: vaan-bakes/backend/Dockerfile
     healthCheckPath: /healthz
     autoDeploy: true
     envVars:
@@ -32,6 +36,6 @@ services:
         sync: false            # set in the Render dashboard
       - key: CORS_ORIGIN
         value: "*"
-      - key: NODE_VERSION
-        value: 20
+      - key: PORT
+        value: 4000
 

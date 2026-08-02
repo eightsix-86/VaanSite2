@@ -1,22 +1,23 @@
-# Build context is the project root (see docker-compose.yml), so this
-# Dockerfile can pick up both backend/ and the static frontend/ it serves.
+# Build context is the repo root (docker-compose.yml and Render
+# blueprint both build from the repository root), so this Dockerfile
+# picks up both vaan-bakes/backend/ and vaan-bakes/frontend/.
 FROM node:20-alpine
 
 WORKDIR /app
 
 # Install deps first so this layer caches across code-only changes
-COPY backend/package.json backend/package-lock.json* ./
+COPY vaan-bakes/backend/package.json vaan-bakes/backend/package-lock.json* ./
 RUN npm install --omit=dev
 
 # App code
-COPY backend/server.js ./
-COPY backend/db.js ./
-COPY backend/schema.sql ./
-COPY backend/seed.js ./
-COPY backend/src ./src
+COPY vaan-bakes/backend/server.js ./
+COPY vaan-bakes/backend/db.js ./
+COPY vaan-bakes/backend/schema.sql ./
+COPY vaan-bakes/backend/seed.js ./
+COPY vaan-bakes/backend/src ./src
 
 # Static frontend the server serves directly (see server.js FRONTEND_DIR)
-COPY frontend /frontend
+COPY vaan-bakes/frontend /frontend
 
 ENV PORT=4000
 EXPOSE 4000
