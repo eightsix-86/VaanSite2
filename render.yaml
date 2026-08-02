@@ -2,17 +2,16 @@
 # Render Blueprint — free-tier deployment for the Vaan Bakes API
 # ============================================================
 # How to use:
-#   1. Create a free PostgreSQL database on Supabase (or Neon).
+#   1. Create a free PostgreSQL database on Supabase (already done —
+#      schema applied + seeded).
 #   2. Create a free Web Service on Render:
 #        New + → Blueprint → connect this repo.
-#      Render reads render.yaml and provisions the service.
+#      Render reads render.yaml (at the repo root) and provisions
+#      the service.
 #   3. Set DATABASE_URL and ADMIN_PASSWORD as environment variables
 #      in the Render dashboard (sync: false means you set them
 #      yourself — they never live in the repo).
-#   4. Deploy, then run the seed script once against Supabase:
-#        DATABASE_URL=... npx render deploy-run-script   (or use
-#        the Render Shell) → `env DATABASE_URL=... node seed.js`
-#   Your API is live:
+#   4. Deploy. The API is live at:
 #        https://<service-name>.onrender.com/api/products
 # ============================================================
 
@@ -20,7 +19,7 @@ services:
   - type: web
     name: vaan-bakes-api
     runtime: node
-    rootDir: backend
+    rootDir: vaan-bakes/backend
     plan: free
     buildCommand: npm install
     startCommand: node server.js
