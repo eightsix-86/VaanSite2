@@ -1,14 +1,17 @@
 # Vaan Bakes 🧁
 
-A small-batch bakery storefront with a custom cake builder, real-time order processing, and full-stack monitoring. Built with a static HTML/CSS/JS frontend (GSAP + anime.js animations) backed by an Express API, auto-provisioned Prometheus metrics, and a Grafana dashboard.
+A full-stack bakery storefront with a custom cake builder, real-time order processing, admin panel, and full-stack monitoring. Built with a static HTML/CSS/JS frontend (GSAP + anime.js animations) backed by an Express API, PostgreSQL via Supabase, auto-provisioned Prometheus metrics, and a Grafana dashboard.
 
 ## Tech Stack
 
 ![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.19-000000?logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?logo=postgresql&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-latest-E6522C?logo=prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-latest-F46800?logo=grafana&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Render](https://img.shields.io/badge/Render-Deploy-46E3B7?logo=render&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)
@@ -20,88 +23,142 @@ A small-batch bakery storefront with a custom cake builder, real-time order proc
 - **Online Storefront** — Browse 36 products across cakes, cupcakes, and cookies with real-time stock availability
 - **Custom Cake Builder** — Interactive cake designer with size, layers, flavor, filling, frosting, and toppings; live preview and pricing
 - **Shopping Cart & Checkout** — Full cart with localStorage persistence, checkout form, and order submission via REST API
-- **Order Management** — Backend validates stock, decrements inventory, and returns order confirmations with unique IDs
+- **Order Management** — Backend validates stock against the database, decrements inventory, and returns order confirmations with unique UUIDs
+- **Persistent PostgreSQL Storage** — Products, images, orders, events, seasonal specials, and cake builder config all stored in Supabase PostgreSQL
+- **Admin Panel** — Password-protected dashboard (`/admin.html`) for editing products, images, seasonal specials, and cake builder config
+- **Tracking & Recommendations** — Event tracking (views, cart adds, checkouts, orders) powering recommendation logic
 - **Prometheus Metrics** — Instrumented HTTP request counters/durations, order tracking (placed/failed), order value distributions, and out-of-stock gauge
 - **Grafana Dashboard** — Auto-provisioned dashboard with traffic, latency, error rate, order throughput, and stock metrics
 - **Brand Identity** — Warm plum-and-caramel gradient palette, stock imagery with brand-color fallback, smooth GSAP/anime.js page animations
-- **Dockerized Deployment** — One-command startup for backend + Prometheus + Grafana via Docker Compose
+- **Dockerized Deployment** — One-command startup for backend + Prometheus + Grafana via Docker Compose, or deploy to Render via the Blueprint
 - **Responsive Design** — Fully responsive layout across desktop, tablet, and mobile
 
 ## Project Structure
 
 ```
-vaan-bakes/
-├── frontend/                          # Static site (served by Express)
-│   ├── index.html                     # Homepage
-│   ├── store.html                     # Store + cake builder
-│   ├── refund.html                    # Refund policy
-│   ├── css/
-│   │   └── styles.css                 # Complete stylesheet
-│   └── js/
-│       ├── main.js                    # Homepage logic, animations, cake builder
-│       ├── store.js                   # Store catalog, cart, checkout
-│       ├── products.js                # Product rendering helpers
-│       ├── scroll-waves.js            # Wave overlay animations
-│       └── cake3d.js                  # 3D cake visualization
-├── backend/                           # Express API server
-│   ├── server.js                      # App entry, static serving, metrics endpoint
-│   ├── package.json
-│   ├── Dockerfile
-│   └── src/
-│       ├── metrics.js                 # Prometheus instrumentation
-│       ├── data/
-│       │   └── products.js            # Product catalog + seasonal specials
-│       └── routes/
-│           ├── products.js            # Product API routes
-│           └── orders.js              # Order API routes
-├── monitoring/
-│   ├── prometheus.yml                 # Prometheus scrape config
-│   └── grafana/
-│       ├── provisioning/
-│       │   ├── datasources/
-│       │   │   └── datasource.yml     # Auto-provisioned Prometheus datasource
-│       │   └── dashboards/
-│       │       └── dashboard.yml      # Auto-provisioned dashboard config
-│       └── dashboards/
-│           └── vaan-bakes.json        # Pre-built Grafana dashboard
+VaanSite2/                             # repo root
+├── render.yaml                        # Render Blueprint (Docker deploy)
 ├── docker-compose.yml                 # Backend + Prometheus + Grafana
-├── CHANGELOG.md                       # Version history
-└── README.md                          # This file
+├── supabase/
+│   ├── config.toml                    # Supabase project config
+│   └── migrations/
+│       └── 00001_init.sql             # Canonical schema (idempotent)
+├── vaan-bakes/
+│   ├── frontend/                      # Static site (served by Express)
+│   │   ├── index.html                 # Homepage
+│   │   ├── store.html                 # Store + cake builder
+│   │   ├── refund.html                # Refund policy
+│   │   ├── admin.html                 # Admin panel
+│   │   ├── css/styles.css             # Complete stylesheet
+│   │   └── js/                        # main, store, products, tracking,
+│   │                                  # scroll-waves, cake3d, config
+│   ├── backend/                       # Express API server
+│   │   ├── server.js                  # App entry, static serving, metrics
+│   │   ├── db.js                      # Postgres pool + memory fallback
+│   │   ├── schema.sql                 # Postgres schema (source of truth)
+│   │   ├── seed.js                    # Apply schema + seed catalog
+│   │   ├── package.json
+│   │   ├── Dockerfile
+│   │   └── src/
+│   │       ├── metrics.js             # Prometheus instrumentation
+│   │       ├── admin-sessions.js      # Token-based admin auth
+│   │       ├── data/products.js       # Seed catalog + seasonal specials
+│   │       └── routes/                # products, orders, events, builder, admin
+│   └── monitoring/
+│       ├── prometheus.yml
+│       └── grafana/
+│           ├── provisioning/          # auto-provisioned datasource + dashboard
+│           └── dashboards/vaan-bakes.json
+└── CHANGELOG.md                       # Version history
 ```
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) (recommended)
-- OR [Node.js 20+](https://nodejs.org/) for local development
+- [Node.js 20+](https://nodejs.org/) for local development
+- [Docker](https://docs.docker.com/get-docker/) + [Docker Compose](https://docs.docker.com/compose/install/) (optional, for the full monitoring stack)
+- A [Supabase](https://supabase.com/) project (or any PostgreSQL database) for persistence
+- A [Render](https://render.com/) account (for deployment)
 
 ## Getting Started
 
-### Docker (Recommended)
+### 1. Database Setup (Supabase)
 
-Brings up the backend, Prometheus, and Grafana together:
+1. Create a free Supabase project.
+2. Get your connection string from **Project Settings → Database → Connection string** (use the **Session pooler** for IPv4 compatibility).
+3. Create `vaan-bakes/backend/.env` from the template:
 
 ```bash
-cd vaan-bakes
+cd vaan-bakes/backend
+cp .env.example .env   # then fill in your values
+```
+
+```dotenv
+DATABASE_URL=postgresql://postgres.<ref>:<password>@aws-1-<region>.pooler.supabase.com:5432/postgres
+DATABASE_SSL=true
+PORT=4000
+ADMIN_PASSWORD=your-secret-password
+CORS_ORIGIN=*
+```
+
+> `.env` is git-ignored — your credentials never reach the repo.
+
+### 2. Seed the Database
+
+```bash
+cd vaan-bakes/backend
+npm install
+npm run seed
+```
+
+This applies `schema.sql` and loads the 36 products, 3 seasonal specials, and the default cake builder config.
+
+### 3. Run Locally
+
+```bash
+cd vaan-bakes/backend
+npm start
+```
+
+- Site & API: http://localhost:4000
+- Health check: http://localhost:4000/healthz
+- Metrics: http://localhost:4000/metrics
+- Admin panel: http://localhost:4000/admin.html (requires `ADMIN_PASSWORD`)
+
+### 4. Full Stack with Monitoring (Docker Compose)
+
+From the **repo root**:
+
+```bash
 docker compose up --build
 ```
 
 | Service    | URL                          | Credentials      |
 |------------|------------------------------|------------------|
-| Site       | http://localhost:4000        | —                |
+| Site + API | http://localhost:4000        | —                |
 | Prometheus | http://localhost:9090        | —                |
 | Grafana    | http://localhost:3000        | `admin` / `admin` |
 
-Grafana loads with the "Vaan Bakes Backend" dashboard pre-installed.
+## Deploying to Render
 
-### Local Development (Backend Only)
+The repo includes a [Render Blueprint](render.yaml) that provisions a Docker-based web service bundling both the API and the static frontend.
 
-```bash
-cd vaan-bakes/backend
-npm install
-npm start
+### One-time setup
+
+1. Push this repo to GitHub.
+2. On Render: **New + → Blueprint → select the repo**.
+3. Render reads `render.yaml` and creates the `vaan-bakes-api` service.
+4. In the service's **Environment** tab, set:
+   - `DATABASE_URL` — your Supabase session pooler URL
+   - `DATABASE_SSL=true`
+   - `ADMIN_PASSWORD` — a strong password for the admin panel
+   - `CORS_ORIGIN=*` (or your frontend domain)
+5. Deploy. The health check hits `/healthz`.
+
+Your API will be live at:
+
 ```
-
-The backend serves the frontend directly at http://localhost:4000 and exposes the API under `/api`.
+https://vaan-bakes-api.onrender.com/api/products
+```
 
 ## API Reference
 
@@ -114,6 +171,9 @@ The backend serves the frontend directly at http://localhost:4000 and exposes th
 | `GET`  | `/api/products/:category/:id`   | Single product by ID                             |
 | `POST` | `/api/orders`                   | Place an order (see request body below)          |
 | `GET`  | `/api/orders/:id`               | Get order status by ID                           |
+| `POST` | `/api/events`                   | Record a tracking event (view / cart add, etc.)  |
+| `GET`  | `/api/builder-config`           | Cake builder configuration                       |
+| `GET`  | `/api/admin/*`                  | Admin CRUD endpoints (protected)                 |
 | `GET`  | `/healthz`                      | Liveness check                                   |
 | `GET`  | `/metrics`                      | Prometheus metrics scrape endpoint               |
 
@@ -185,13 +245,16 @@ Full product catalog organized into Cakes, Cupcakes, and Cookies sections. Featu
 - Interactive cake builder with live preview and pricing
 - Shopping cart modal with checkout flow
 
+### Admin (`/admin.html`)
+Password-protected dashboard (protected by `ADMIN_PASSWORD`) for managing the product catalog, images, seasonal specials, and cake builder configuration — all persisted to PostgreSQL.
+
 ### Refund Policy (`/refund.html`)
 Comprehensive refund and cancellation policy with contact information.
 
 ## Notes
 
-- The product catalog and orders are in-memory (reset on restart) — this keeps the stack lightweight without requiring a database. Swapping in a real database would be the natural next step.
-- Stock photos use [picsum.photos](https://picsum.photos) seeded by product ID. For production, replace with licensed photography or your own images.
+- The backend gracefully falls back to an in-memory store if `DATABASE_URL` is not set — great for quick local demos, but data resets on restart.
+- Stock photos use [picsum.photos](https://picsum.photos) seeded by product ID. For production, replace with licensed photography or your own images via the admin panel.
 
 ## Contributing
 
