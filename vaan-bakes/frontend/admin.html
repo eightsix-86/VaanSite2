@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Vaan Bakes</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Scoped admin layout styles — reuse brand palette from styles.css */
+        :root {
+            --admin-bg: #fbf7f3;
+            --admin-card: #ffffff;
+            --admin-border: rgba(94, 46, 79, 0.15);
+            --admin-text: #2f2220;
+            --admin-muted: #6b5b56;
+            --admin-primary: #5e2e4f;
+            --admin-accent: #8d4e3b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body.admin-body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--admin-bg);
+            color: var(--admin-text);
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-shell { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--admin-border);
+        }
+        .admin-header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            color: var(--admin-primary);
+            margin: 0;
+        }
+        .admin-header .admin-sub { color: var(--admin-muted); font-size: 0.9rem; }
+
+        .admin-login {
+            max-width: 420px;
+            margin: 8vh auto;
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 12px 40px rgba(63, 36, 47, 0.12);
+            text-align: center;
+        }
+        .admin-login h2 { font-family: 'Fraunces', serif; color: var(--admin-primary); margin-top: 0; }
+        .admin-login p { color: var(--admin-muted); margin-bottom: 20px; }
+        .admin-login input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--admin-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 14px;
+        }
+        .btn-admin {
+            background: linear-gradient(135deg, #5e2e4f, #8d4e3b);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .btn-admin:hover { opacity: 0.92; }
+        .admin-error { color: #c0392b; margin-top: 10px; font-size: 0.9rem; }
+
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .admin-tab {
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            padding: 10px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--admin-muted);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .admin-tab.active, .admin-tab:hover { background: var(--admin-primary); color: #fff; border-color: var(--admin-primary); }
+
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; }
+
+        .admin-card {
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .admin-card h3 { font-family: 'Fraunces', serif; color: var(--admin-primary); margin-top: 0; }
+        .admin-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .admin-row input, .admin-row select, .admin-row textarea {
+            padding: 10px 12px;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            flex: 1 1 160px;
+        }
+        .admin-row textarea { min-height: 60px; resize: vertical; }
+
+        .admin-list { display: grid; gap: 12px; }
+        .admin-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            flex-wrap: wrap;
+        }
+        .admin-list-item .item-name { font-weight: 700; }
+        .admin-list-item .item-meta { color: var(--admin-muted); font-size: 0.85rem; }
+        .admin-list-item .item-actions { display: flex; gap: 8px; }
+        .btn-sm {
+            background: var(--admin-primary);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-sm.danger { background: #c0392b; }
+        .btn-sm.outline { background: transparent; border: 1px solid var(--admin-border); color: var(--admin-text); }
+
+        .admin-empty { color: var(--admin-muted); font-style: italic; padding: 12px 0; }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--admin-primary);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            display: none;
+            z-index: 9999;
+        }
+        .toast.show { display: block; animation: fadeInUp 0.3s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="admin-body">
+    <div class="toast" id="admin-toast"></div>
+
+    <!-- Login view -->
+    <div class="admin-login" id="login-view">
+        <h2>Vaan Bakes Admin</h2>
+        <p>Enter the admin password to manage products, orders, and builder config.</p>
+        <form id="login-form">
+            <input type="password" id="admin-password" placeholder="Admin password" autocomplete="current-password" required>
+            <button type="submit" class="btn-admin">Sign in</button>
+        </form>
+        <div class="admin-error" id="login-error"></div>
+    </div>
+
+    <!-- Dashboard view -->
+    <div class="admin-shell" id="dashboard-view" style="display:none;">
+        <div class="admin-header">
+            <div>
+                <h1>Vaan Bakes Admin</h1>
+                <div class="admin-sub">Manage your store, orders, and cake builder</div>
+            </div>
+            <div class="admin-actions">
+                <button class="btn-sm outline" onclick="loadBuilderConfigTab()">Refresh</button>
+                <button class="btn-sm danger" onclick="logout()">Log out</button>
+            </div>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="products" onclick="switchTab('products')">Products</button>
+            <button class="admin-tab" data-tab="orders" onclick="switchTab('orders')">Orders</button>
+            <button class="admin-tab" data-tab="builder" onclick="switchTab('builder')">Cake Builder</button>
+        </div>
+
+        <!-- PRODUCTS TAB -->
+        <div class="admin-panel active" id="tab-products">
+            <div class="admin-card">
+                <h3>Add / Update Product</h3>
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+                    <div class="admin-row">
+                        <input type="text" id="product-category" placeholder="Category (cakes/cupcakes/cookies)" list="category-list">
+                        <datalist id="category-list"><option>cakes</option><option>cupcakes</option><option>cookies</option></datalist>
+                        <input type="text" id="product-name" placeholder="Name" required>
+                        <input type="number" id="product-price" placeholder="Price" step="0.01" min="0">
+                        <input type="number" id="product-stock" placeholder="Stock" min="0">
+                    </div>
+                    <div class="admin-row">
+                        <textarea id="product-description" placeholder="Description"></textarea>
+                        <textarea id="product-images" placeholder="Image URLs (comma-separated, first is primary)"></textarea>
+                    </div>
+                    <div class="admin-row">
+                        <input type="text" id="product-keywords" placeholder="Keywords (optional)">
+                        <button type="submit" class="btn-admin" style="max-width:200px;" id="product-save-btn">Save Product</button>
+                    </div>
+                </form>
+            </div>
+            <div class="admin-card">
+                <h3>Existing Products</h3>
+                <div class="admin-list" id="products-list"></div>
+            </div>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div class="admin-panel" id="tab-orders">
+            <div class="admin-card">
+                <h3>Orders</h3>
+                <div class="admin-list" id="orders-list"></div>
+            </div>
+        </div>
+
+        <!-- BUILDER TAB -->
+        <div class="admin-panel" id="tab-builder">
+            <div class="admin-card">
+                <h3>Cake Builder Configuration</h3>
+                <p style="color:#6b5b56; font-size:0.9rem;">Edit pricing JSON. The builder reads this from /api/builder-config.</p>
+                <textarea id="builder-config" style="width:100%; min-height:300px; font-family:monospace; font-size:0.85rem; padding:12px; border:1px solid rgba(94,46,79,0.15); border-radius:8px;"></textarea>
+                <div style="margin-top:12px;">
+                    <button class="btn-admin" style="max-width:200px;" onclick="saveBuilderConfig()">Save Config</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // ============================================================
+        // Vaan Bakes Admin Panel — talks to /api/admin/*
+        // Uses the same apiUrl() helper from config.js.
+        // ============================================================
+
+        let authToken = localStorage.getItem('vaan_admin_token') || '';
+
+        const $ = (sel) => document.querySelector(sel);
+        const toastEl = $('#admin-toast');
+
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.className = 'toast show';
+            setTimeout(() => { toastEl.className = 'toast'; }, 2600);
+        }
+
+        function authHeaders(extra) {
+            return Object.assign({ 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken }, extra || {});
+        }
+
+        async function api(path, options) {
+            const res = await fetch(window.apiUrl(path), options);
+            if (res.status === 401) {
+                // Token expired or invalid — force re-login.
+                localStorage.removeItem('vaan_admin_token');
+                authToken = '';
+                showLogin();
+                throw new Error('Session expired');
+            }
+            return res;
+        }
+
+        function showLogin() {
+            $('#login-view').style.display = 'block';
+            $('#dashboard-view').style.display = 'none';
+        }
+
+        function showDashboard() {
+            $('#login-view').style.display = 'none';
+            $('#dashboard-view').style.display = 'block';
+        }
+
+        async function login(e) {
+            e.preventDefault();
+            const password = $('#admin-password').value;
+            $('#login-error').textContent = '';
+
+            try {
+                const res = await fetch(window.apiUrl('/api/admin/login'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Login failed');
+
+                authToken = data.token;
+                localStorage.setItem('vaan_admin_token', authToken);
+                showDashboard();
+                loadAll();
+            } catch (err) {
+                $('#login-error').textContent = err.message;
+            }
+        }
+
+        function logout() {
+            authToken = '';
+            localStorage.removeItem('vaan_admin_token');
+            showLogin();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
+            document.querySelectorAll('.admin-panel').forEach((p) => p.classList.remove('active'));
+            $('#tab-' + tab).classList.add('active');
+            if (tab === 'products') loadProducts();
+            if (tab === 'orders') loadOrders();
+            if (tab === 'builder') loadBuilderConfig();
+        }
+
+        // ---- Products ----
+        async function loadProducts() {
+            const listEl = $('#products-list');
+            listEl.innerHTML = '<div class="admin-empty">Loading products…</div>';
+            try {
+                const res = await api(window.apiUrl('/api/admin/products'), { headers: authHeaders() });
+                if (!res.ok) throw new Error('Failed to load');
+                const products = await res.json();
+                if (products.length === 0) {
+                    listEl.innerHTML = '<div class="admin-empty">No products yet.</div>';
+                    return;
+                }
+                listEl.innerHTML = products.map((p) => `
+                    <div class="admin-list-item">
+                        <div>
+                            <div class="item-name">${p.name}</div>
+                            <div class="item-meta">${p.category} · $${Number(p.price).toFixed(2)} · stock ${p.stock} · ${p.id}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-sm" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'>Edit</button>
+                            <button class="btn-sm danger" onclick="deleteProduct('${p.id}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                listEl.innerHTML = '<div class="admin-empty">Error loading products.</div>';
+            }
+        }
+
+        function editProduct(p) {
+            $('#product-id').value = p.id || '';
+            $('#product-category').value = p.category || '';
+            $('#product-name').value = p.name || '';
+            $('#product-price').value = p.price || '';
+            $('#product-stock').value = p.stock || '';
+            $('#product-description').value = p.description || '';
+            $('#product-keywords').value = p.keywords || '';
+            $('#product-images').value = (p.images && p.images.length ? p.images.join(', ') : p.image || '');
+            $('#product-save-btn').textContent = 'Update Product';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetProductForm() {
+            $('#product-form').reset();
+            $('#product-id').value = '';
+            $('#product-save-btn').textContent = 'Save Product';
+        }
+
+        async function submitProduct(e) {
+            e.preventDefault();
+            const id = $('#product-id').value;
+            const payload = {
+                id: id || undefined,
+                category: $('#product-category').value.trim().toLowerCase(),
+                name: $('#product-name').value.trim(),
+                price: parseFloat($('#product-price').value) || 0,
+                stock: parseInt($('#product-stock').value) || 0,
+                description: $('#product-description').value.trim(),
+                keywords: $('#product-keywords').value.trim(),
+                images: $('#product-images').value.split(',').map((s) => s.trim()).filter(Boolean)
+            };
+
+            try {
+                const res = await api(window.apiUrl(id ? `/api/admin/products/${id}` : '/api/admin/products'), {
+                    method: id ? 'PUT' : 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error || 'Save failed'); }
+                showToast(id ? 'Product updated' : 'Product created');
+                resetProductForm();
+                loadProducts();
+            } catch (err) {
+                showToast(err.message);
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm(`Delete product ${id}?`)) return;
+            try {
+                const res = await api(window.apiUrl(`/api/admin/products/${id}`), {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                if (!res.ok) throw new Error('Delete failed');
+                showToast('Product deleted');
+                loadProducts();
+            } catch (err) {
+                showToast(err.message);
+            }
+        }
+
+        // ---- Orders ----
+        async function loadOrders() {
+            const listEl = $('#orders-list');
+            listEl.innerHTML = '<div class="admin-empty">Loading orders…</div>';
+            try {
+                const res = await api(window.apiUrl('/api/admin/orders'), { headers: authHeaders() });
+                if (!res.ok) throw new Error('Failed to load');
+                const orders = await res.json();
+                if (orders.length === 0) {
+                    listEl.innerHTML = '<div class="admin-empty">No orders yet.</div>';
+                    return;
+                }
+                listEl.innerHTML = orders.map((o) => `
+                    <div class="admin-list-item">
+                        <div style="flex:1;">
+                            <div class="item-name">#${String(o.id).slice(0, 8)} · ${o.customer?.name || 'Unknown'}</div>
+                            <div class="item-meta">${new Date(o.createdAt).toLocaleString()} · $${Number(o.total).toFixed(2)} · ${o.status}</div>
+                            <div class="item-meta">${(o.items || []).map((i) => `${i.name} x${i.quantity}`).join(', ')}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                listEl.innerHTML = '<div class="admin-empty">Error loading orders.</div>';
+            }
+        }
+
+        // ---- Builder Config ----
+        async function loadBuilderConfig() {
+            try {
+                const res = await api(window.apiUrl('/api/admin/builder-config'), { headers: authHeaders() });
+                if (!res.ok) throw new Error('Failed to load');
+                const config = await res.json();
+                $('#builder-config').value = JSON.stringify(config, null, 2);
+            } catch (err) {
+                $('#builder-config').value = '// Error loading config';
+            }
+        }
+
+        async function saveBuilderConfig() {
+            try {
+                const config = JSON.parse($('#builder-config').value);
+                const res = await api(window.apiUrl('/api/admin/builder-config'), {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify(config)
+                });
+                if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error || 'Save failed'); }
+                showToast('Builder config saved');
+            } catch (err) {
+                showToast('Invalid JSON: ' + err.message);
+            }
+        }
+
+        function loadBuilderConfigTab() {
+            const active = document.querySelector('.admin-tab.active');
+            if (active) switchTab(active.dataset.tab);
+        }
+
+        // ---- Wire-up ----
+        $('#login-form').addEventListener('submit', login);
+        $('#product-form').addEventListener('submit', submitProduct);
+        window.editProduct = editProduct;
+        window.deleteProduct = deleteProduct;
+        window.logout = logout;
+        window.switchTab = switchTab;
+        window.saveBuilderConfig = saveBuilderConfig;
+        window.loadBuilderConfigTab = loadBuilderConfigTab;
+
+        // Restore session or show login.
+        if (authToken) {
+            showDashboard();
+            loadAll();
+        } else {
+            showLogin();
+        }
+
+        async function loadAll() {
+            loadProducts();
+            loadOrders();
+            loadBuilderConfig();
+        }
+    </script>
+</body>
+</html>
+

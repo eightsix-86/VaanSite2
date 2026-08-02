@@ -10,6 +10,9 @@ RUN npm install --omit=dev
 
 # App code
 COPY backend/server.js ./
+COPY backend/db.js ./
+COPY backend/schema.sql ./
+COPY backend/seed.js ./
 COPY backend/src ./src
 
 # Static frontend the server serves directly (see server.js FRONTEND_DIR)

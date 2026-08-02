@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadSeasonalSpecials(seasonalSpecialsGrid) {
     try {
-        const response = await fetch('/api/products/specials');
+        const response = await fetch(window.apiUrl('/api/products/specials'));
         if (response.ok) {
             window.__vaanSeasonalSpecials = await response.json();
         }

@@ -17,7 +17,7 @@ let productsData = { cakes: [], cupcakes: [], cookies: [] };
 const BRAND_GRADIENT = 'linear-gradient(135deg, #5e2e4f 0%, #8d4e3b 100%)';
 
 async function fetchProductsData() {
-    const response = await fetch('/api/products');
+    const response = await fetch(window.apiUrl('/api/products'));
     if (!response.ok) {
         throw new Error(`Failed to load products: ${response.status}`);
     }
@@ -123,7 +123,7 @@ function openCart() {
 }
 
 // Add to Cart functionality
-function addToCart(productId, name, price, image) {
+function addToCart(productId, name, price, image, product) {
     const existingItem = cart.find(item => item.productId === productId);
 
     if (existingItem) {
@@ -140,6 +140,18 @@ function addToCart(productId, name, price, image) {
     
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
+
+    // Track the add-to-cart event for recommendations + metrics
+    if (window.__track && product) {
+        window.__track.addToCart(product);
+    }
+
+    // Remember this product for the recommendation engine.
+    if (product && product.id) {
+        const recent = JSON.parse(localStorage.getItem('vaan_recent_products') || '[]');
+        const updated = [product.id, ...recent.filter((id) => id !== product.id)].slice(0, 5);
+        localStorage.setItem('vaan_recent_products', JSON.stringify(updated));
+    }
     
     // Show feedback
     alert(`${name} added to cart!`);
@@ -241,10 +253,49 @@ function createProductCard(product) {
     // Add to cart event
     const addBtn = card.querySelector('.add-to-cart-btn');
     if (!outOfStock) {
-        addBtn.addEventListener('click', () => addToCart(product.id, product.name, product.price, product.image));
+        addBtn.addEventListener('click', () => addToCart(product.id, product.name, product.price, product.image, product));
+    }
+
+    // Track product views (fires once, in the background, never blocks UX).
+    if (window.__track && product && product.id) {
+        const once = () => {
+            window.__track.viewProduct(product);
+            document.removeEventListener('mouseover', once, { capture: true });
+        };
+        document.addEventListener('mouseover', once, { capture: true });
     }
 
     return card;
+}
+
+// ===================================
+// RECOMMENDATIONS — powered by the backend behavioral engine
+// ===================================
+async function loadRecommendations() {
+    const grid = document.getElementById('recommended-grid');
+    if (!grid) return;
+
+    // Use the most recent product we've seen (from localStorage, set on
+    // add-to-cart) as the seed for the recommendation engine.
+    const recent = JSON.parse(localStorage.getItem('vaan_recent_products') || '[]');
+    if (recent.length === 0) return;
+
+    try {
+        const response = await fetch(window.apiUrl(`/api/products/recommended/${recent[0]}?limit=4`));
+        if (!response.ok) throw new Error('Failed to load recommendations');
+
+        const recommendations = await response.json();
+        if (!recommendations.length) return;
+
+        grid.innerHTML = '';
+        recommendations.forEach((product) => grid.appendChild(createProductCard(product)));
+
+        // Show the section (hidden until we have data).
+        const section = grid.closest('#recommended') || grid.closest('.recommended-section');
+        if (section) section.style.display = '';
+    } catch (err) {
+        console.warn('Recommendations unavailable:', err);
+    }
 }
 
 // ===================================
@@ -304,6 +355,9 @@ function openCheckout() {
     }).join('');
     checkoutTotal.textContent = `$${total.toFixed(2)}`;
 
+    // Track checkout start for analytics
+    if (window.__track) window.__track.checkoutStart();
+
     document.getElementById('cart-modal')?.classList.remove('active');
     checkoutModal.classList.add('active');
 }
@@ -330,7 +384,7 @@ document.getElementById('checkout-form')?.addEventListener('submit', async (e) =
     if (submitBtn) submitBtn.disabled = true;
 
     try {
-        const response = await fetch('/api/orders', {
+        const response = await fetch(window.apiUrl('/api/orders'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -363,6 +417,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load products first (async: comes from the backend now)
     await loadProducts();
     updateCartCount();
+
+    // Load the personalized recommendation section (skips quietly if
+    // there's no browsing history yet or the backend is unreachable).
+    const recommendedSection = document.getElementById('recommended');
+    if (recommendedSection) {
+        recommendedSection.style.display = 'none'; // hide until populated
+        await loadRecommendations();
+    }
 
     console.log('✅ Products loaded successfully!');
 

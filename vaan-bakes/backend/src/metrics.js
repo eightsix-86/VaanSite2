@@ -7,6 +7,9 @@
 //   - vaan_orders_total              counter, labeled by status (placed/failed)
 //   - vaan_order_value_dollars       histogram of order totals
 //   - vaan_products_out_of_stock     gauge, current out-of-stock product count
+//   - vaan_product_views_total       counter, labeled by product_id
+//   - vaan_cart_adds_total           counter, labeled by product_id
+//   - vaan_event_ingestion_total     counter, labeled by event type
 
 const client = require('prom-client');
 
@@ -49,6 +52,29 @@ const outOfStockGauge = new client.Gauge({
     registers: [register]
 });
 
+// --- Behavioral metrics (used for recommendations + analytics) ---
+
+const productViews = new client.Counter({
+    name: 'vaan_product_views_total',
+    help: 'Number of product detail views, by product',
+    labelNames: ['product_id'],
+    registers: [register]
+});
+
+const cartAdds = new client.Counter({
+    name: 'vaan_cart_adds_total',
+    help: 'Number of times a product was added to the cart',
+    labelNames: ['product_id'],
+    registers: [register]
+});
+
+const eventIngestion = new client.Counter({
+    name: 'vaan_event_ingestion_total',
+    help: 'Total tracking events ingested, by type',
+    labelNames: ['type'],
+    registers: [register]
+});
+
 // Express middleware: times every request and records it under a
 // low-cardinality route label (the matched Express path, e.g.
 // "/api/products/:category", not the raw URL) so metric series don't
@@ -69,5 +95,9 @@ module.exports = {
     httpMetricsMiddleware,
     ordersTotal,
     orderValue,
-    outOfStockGauge
+    outOfStockGauge,
+    productViews,
+    cartAdds,
+    eventIngestion
 };
+
