@@ -270,5 +270,6 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-<p align="center">Made with ❤️ and a lot of buttercream</p>
+
+
 
